@@ -16,7 +16,7 @@ public void setup() {
 
   take_picture_lock = new TakePictureLock();
 
-  oscP5 = new OscP5(this, 12345);
+  oscP5 = new OscP5(this, 12002);
 
   nex6 = new Nex6(this);
   boolean rv = nex6.start();
