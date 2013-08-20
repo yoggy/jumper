@@ -144,6 +144,11 @@ void fire_jump() {
   }
   last_t = t;
 
+  if (jump_count == 0) {
+    // set initiali value...
+    bpm = 120.0;
+    dulation = 0.5;
+  }
   jump_count ++;
   if (jump_count == shutter_count) jump_count = 0;
 }
