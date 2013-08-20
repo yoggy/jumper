@@ -1,17 +1,19 @@
 //
-//  jumping_human.pde
+//  jumping_human2.pde
 //
 import ddf.minim.*;
 import controlP5.*;
 import oscP5.*;
 import netP5.*;
 
+import processing.video.*;
+
+
 // configuration
 float shutter_chance = 0.2;  // 0.0-1.0
 boolean debug_draw = true;
 
 int shutter_count = 8;
-
 
 int jump_count = 0;
 long last_t = 0;
@@ -36,6 +38,7 @@ PFont font_normal = createFont("Impact", 36);
 PFont font_large = createFont("Impact", 360);
 
 ControlP5 cp5;
+Capture video;
 
 void init() {
   frame.removeNotify();
@@ -46,6 +49,9 @@ void init() {
 
 void setup() {
   size(480, 640);
+
+  video = new Capture(this, 640, 480);
+  video.start();
   
   minim = new Minim(this);
 
@@ -96,11 +102,17 @@ void update() {
   }
 }
 
+void captureEvent(Capture c) {
+  c.read();
+}
+
 void draw() {
   // update human status
   update();
 
   background(0, 0, 0);
+
+  image(video, 0, 0);
 
   if (debug_draw) {
     draw_debug_info();
