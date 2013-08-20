@@ -92,9 +92,10 @@ void draw() {
   // check shutter chance
   float p = (millis() - last_t) / 1000.0 / dulation;
   if (is_take_picture == false && human_y > 0.0 && p >= shutter_chance) {
-    take_picture(x, y);
+    if (jump_count == 0) {
+      take_picture();
+    }
   }
-  draw_picture_frame();
 
   noStroke();
 
@@ -186,33 +187,15 @@ void draw_human(float  x, float y) {
   line(x, y -  40, x + 20, y     );
 }
 
-void take_picture(float x, float y) {
+void take_picture() {
   is_take_picture = true;
-  picture_frame_counter = 0;
-
-  picture_frame_x = x;
-  picture_frame_y = y;
   
+  // play shutter se
+  se_shutter.play(0);
+
   // send osc 
-  if (jump_count == 0) {
-    se_shutter.play(0);
-
-    OscMessage myMessage = new OscMessage("/take_picture");
-    myMessage.add(123);
-    oscP5.send(myMessage, myRemoteLocation);
-  }
-}
-
-void draw_picture_frame() {
-  if (is_take_picture == false) return;
-  if (picture_frame_counter >= 6) return;
-
-  stroke(255, 255, 255);
-  strokeWeight(20);
-  noFill();
-
-  //rect(picture_frame_x - 100, picture_frame_y - 150, 200, 200);  
-
-  picture_frame_counter ++;
+  OscMessage myMessage = new OscMessage("/take_picture");
+  myMessage.add(123);
+  oscP5.send(myMessage, myRemoteLocation);
 }
 
