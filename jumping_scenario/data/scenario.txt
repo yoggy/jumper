@@ -1,0 +1,45 @@
+# idle status
+-1 show_overlay s:title1.jpg
+=  show_overlay s:title2.jpg
+=  show_overlay s:title3.jpg
+=  reset_effect
+
+# start scenario
+3  show_overlay s:sono-cho-shi.jpg
+=  change_effect_random
++  nop
++  hide_overlay
+
+# take picture 1
+10 show_overlay s:3.jpg
++  show_overlay s:2.jpg
++  show_overlay s:1.jpg
++  take_picture 
+=  show_overlay s:shutter.jpg
++  show_overlay s:sono-cho-shi.jpg
++  nop
++  change_effect_random
+=  hide_overlay
+
+# take picture 2
+18 show_overlay s:3.jpg
++  show_overlay s:2.jpg
++  show_overlay s:1.jpg
++  take_picture 
+=  show_overlay s:shutter.jpg
++  nop
++  show_overlay s:sono-cho-shi.jpg
+=  hide_overlay
+
+# take picture 3
+24 show_overlay s:3.jpg
++  show_overlay s:2.jpg
++  show_overlay s:1.jpg
++  take_picture 
+=  show_overlay s:shutter.jpg
++  nop
+
+# finish
++  show_overlay s:finish.jpg
+=  reset_effect
+
