@@ -1,8 +1,8 @@
 # idle status
+-1 reset_effect
 -1 show_overlay s:title1.jpg
--1  show_overlay s:title2.jpg 
--1  show_overlay s:title3.jpg
--1  reset_effect
+-1 show_overlay s:title2.jpg 
+-1 show_overlay s:title3.jpg
 
 # start scenario
 3  show_overlay s:sono-cho-shi.jpg
