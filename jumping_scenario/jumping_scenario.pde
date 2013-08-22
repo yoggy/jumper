@@ -35,7 +35,6 @@ void setup() {
   cp5.addButton("Reload_Scenario").setPosition(10, 100).setSize(100, 40);
 
   setup_sound();
-  setup_commands();
 
   scenario = new ScenarioPlayer(this);
   if (scenario.load("scenario.txt") == false) {

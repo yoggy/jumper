@@ -1,15 +1,9 @@
-NetAddress remote_location;
-NetAddress remote_location2;
+NetAddress remote_location  = new NetAddress("127.0.0.1", 12345);  // for webcam system
+NetAddress remote_location2 = new NetAddress("127.0.0.1", 12002);  // for nex-5r
 boolean fire_take_picture_flag = false;
 boolean fire_take_picture_flag2 = false;
 
 Random random = new Random();
-
-// call from PApplet.setup()
-void setup_commands() {
-  remote_location  = new NetAddress("127.0.0.1", 12345);  // for webcam system
-  remote_location2 = new NetAddress("127.0.0.1", 12002);  // for nex
-}
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -19,6 +13,7 @@ void setup_commands() {
 
 void nop() {
   show_message("nop");
+  // nop = no operation. see also http://ja.wikipedia.org/wiki/NOP
 }
 
 void show_overlay(String filename) {
