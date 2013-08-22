@@ -1,0 +1,11 @@
+0 clear_effect
+= hide_overlay
+
+4 show_overlay s:title1.jpg
+
+8 show_overlay s:title2.jpg 
+
+12 show_overlay s:title3.jpg
++ nop
++ nop
++ nop

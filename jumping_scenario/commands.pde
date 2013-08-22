@@ -5,10 +5,17 @@ boolean fire_take_picture_flag2 = false;
 
 Random random = new Random();
 
+// call from PApplet.setup()
 void setup_commands() {
-  remote_location  = new NetAddress("127.0.0.1", 12002);  
-  remote_location2 = new NetAddress("127.0.0.1", 12002); 
+  remote_location  = new NetAddress("127.0.0.1", 12345);  // for webcam system
+  remote_location2 = new NetAddress("127.0.0.1", 12002);  // for nex
 }
+
+////////////////////////////////////////////////////////////////////////
+//
+// commands for scenario file  (call from ScenarioPlayer class)
+//
+////////////////////////////////////////////////////////////////////////
 
 void nop() {
   show_message("nop");
@@ -37,10 +44,10 @@ void set_effect(int val) {
   oscP5.send(msg, remote_location);
 }
 
-void reset_effect() {
+void clear_effect() {
   show_message("reset_effect");
 
-  OscMessage msg = new OscMessage("/reset_effect");
+  OscMessage msg = new OscMessage("/clear_effect");
   oscP5.send(msg, remote_location);
 }
 
@@ -58,6 +65,9 @@ void take_picture() {
   fire_take_picture_flag2 = true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+
+// for webcam system (call from update_human_status())
 void fire_take_picture() {
   println("fire_take_picture!!!!");
   se_shutter.play(0);
@@ -66,7 +76,7 @@ void fire_take_picture() {
   oscP5.send(msg, remote_location);
 }
 
-// for nex-5r
+// for nex-5r  (call from update_human_status())
 void fire_take_picture2() {
   println("fire_take_picture2!!!!");
 

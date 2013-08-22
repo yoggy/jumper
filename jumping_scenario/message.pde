@@ -14,7 +14,7 @@ void draw_message() {
   fill(0, 0, 0);
   textFont(font_small);  
 
-  int x = 160;
+  int x = 200;
   int y = 300;  
   for (int i = 0; i < messages.size(); ++i) {
     String msg = (String)messages.get(i);

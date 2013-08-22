@@ -1,9 +1,7 @@
-import processing.serial.*;
-
 //
 //  jumping_scenario.pde
 //
-import ddf.minim.*;
+import processing.serial.*;
 import controlP5.*;
 import oscP5.*;
 import netP5.*;
@@ -12,14 +10,10 @@ import netP5.*;
 float shutter_chance  = 0.4;  // 0.0-1.0
 float shutter_chance2 = 0.3;  // 0.0-1.0
 
-Minim minim;
-AudioPlayer se_jump;
-AudioPlayer se_shutter;
-
 ControlP5 cp5;
 OscP5 oscP5;
 
-PFont font_small = createFont("Impact", 20);
+PFont font_small = createFont("Impact", 24);
 PFont font_normal = createFont("Impact", 36);
 PFont font_large = createFont("Impact", 160);
 
@@ -35,23 +29,12 @@ void init() {
 void setup() {
   size(600, 480);
 
-  minim = new Minim(this);
-
-  // http://commons.nicovideo.jp/material/nc27131
-  se_jump = minim.loadFile("nc27131.mp3");
-  se_jump.setGain(-14.0);
-
-  // http://commons.nicovideo.jp/material/nc2035
-  se_shutter = minim.loadFile("nc2035.mp3");
-  se_shutter.setGain(-14.0);
-
   cp5 = new ControlP5(this);  
   cp5.addSlider("shutter_chance").setPosition(10, 50).setSize(300, 20).setRange(0.0, 1.0);
   cp5.addSlider("shutter_chance2").setPosition(10, 75).setSize(300, 20).setRange(0.0, 1.0);
   cp5.addButton("Reload_Scenario").setPosition(10, 100).setSize(100, 40);
 
-  oscP5 = new OscP5(this, 12001);
-
+  setup_sound();
   setup_commands();
 
   scenario = new ScenarioPlayer(this);
@@ -59,24 +42,26 @@ void setup() {
     println("scenario.load() failed...");
     exit();
   }
-}
 
-void enter_idle_mode() {
-  println("enter_idle_mode()");
-  clear_bpm_status();
-  clear_human_status();
-  scenario.rewind();
-  clear_message();
+  setup_idle_mode();
+
+  oscP5 = new OscP5(this, 12001);
 }
 
 void Reload_Scenario() {
   scenario.reload();
+  scenario_idle_mode.reload();
   enter_idle_mode();
 }
 
 void draw() {
   update_human_status();
   background(255, 255, 255);
+
+  if (is_idle_mode()) {
+    draw_idle_mode();
+  }
+
   draw_debug_info();
   draw_message();
   draw_logo();
@@ -115,5 +100,4 @@ void oscEvent(OscMessage theOscMessage) {
     fire_jump();
   }
 }
-
 
