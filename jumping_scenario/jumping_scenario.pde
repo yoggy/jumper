@@ -9,7 +9,8 @@ import oscP5.*;
 import netP5.*;
 
 // configuration
-float shutter_chance = 0.4;  // 0.0-1.0
+float shutter_chance  = 0.4;  // 0.0-1.0
+float shutter_chance2 = 0.3;  // 0.0-1.0
 
 Minim minim;
 AudioPlayer se_jump;
@@ -17,7 +18,6 @@ AudioPlayer se_shutter;
 
 ControlP5 cp5;
 OscP5 oscP5;
-NetAddress myRemoteLocation;
 
 PFont font_small = createFont("Impact", 20);
 PFont font_normal = createFont("Impact", 36);
@@ -33,7 +33,7 @@ void init() {
 }
 
 void setup() {
-  size(640, 640);
+  size(600, 480);
 
   minim = new Minim(this);
 
@@ -46,11 +46,13 @@ void setup() {
   se_shutter.setGain(-14.0);
 
   cp5 = new ControlP5(this);  
-  cp5.addSlider("shutter_chance").setPosition(10, 50).setSize(300, 40).setRange(0.0, 1.0);
+  cp5.addSlider("shutter_chance").setPosition(10, 50).setSize(300, 20).setRange(0.0, 1.0);
+  cp5.addSlider("shutter_chance2").setPosition(10, 75).setSize(300, 20).setRange(0.0, 1.0);
   cp5.addButton("Reload_Scenario").setPosition(10, 100).setSize(100, 40);
 
   oscP5 = new OscP5(this, 12001);
-  myRemoteLocation = new NetAddress("127.0.0.1", 12002);
+
+  setup_commands();
 
   scenario = new ScenarioPlayer(this);
   if (scenario.load("scenario.txt") == false) {
@@ -73,11 +75,17 @@ void Reload_Scenario() {
 }
 
 void draw() {
-  // update human status
-  update();
+  update_human_status();
   background(255, 255, 255);
   draw_debug_info();
   draw_message();
+  draw_logo();
+}
+
+void draw_logo() {
+  fill(0, 0, 0);
+  textFont(font_normal);
+  text("jumping_scenario.pde", width - 360, height - 10);
 }
 
 void stop() {

@@ -45,7 +45,7 @@ void fire_jump() {
     dulation = 0.5;
   }
 
-  if (jump_count < scenario.getMaxTick()) {
+  if (jump_count <= scenario.getMaxTick()) {
     jump_count ++;
   }
 
@@ -53,7 +53,7 @@ void fire_jump() {
   scenario.enter(jump_count);
 }
 
-void update() {
+void update_human_status() {
   if (bpm == 0.0) {
     clear_human_status();
     return;
@@ -73,7 +73,13 @@ void update() {
   human_y = sin(th);
 
   // check shutter chance
-  if (is_take_picture == false && human_y > 0.0 && p >= shutter_chance) {
+  if (fire_take_picture_flag == true && human_y > 0.0 && p >= shutter_chance) {
+    fire_take_picture();
+    fire_take_picture_flag = false;
+  }
+  if (fire_take_picture_flag2 == true && human_y > 0.0 && p >= shutter_chance2) {
+    fire_take_picture2();
+    fire_take_picture_flag2 = false;
   }
 }
 
@@ -95,7 +101,7 @@ void draw_human(float x, float y) {
 void draw_debug_info() {
   // draw human body
   float x = 60;
-  float y = (height * 0.5) * (1.0 - human_y) + height * 0.5;
+  float y = (height * 0.4) * (1.0 - human_y) + height * 0.6;
   draw_human(x, y);
 
   noStroke();
