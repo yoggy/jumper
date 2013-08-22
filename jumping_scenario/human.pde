@@ -25,6 +25,8 @@ void calc_initial_human_status(float dt) {
 }
 
 void fire_jump() {
+  clear_message();
+  
   long t = millis();
   float dt = (t - last_t) / 1000.0;
 
@@ -43,7 +45,7 @@ void fire_jump() {
     dulation = 0.5;
   }
 
-  if (jump_count <= scenario.getMaxTick()) {
+  if (jump_count < scenario.getMaxTick()) {
     jump_count ++;
   }
 

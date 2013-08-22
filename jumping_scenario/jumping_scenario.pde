@@ -15,15 +15,16 @@ Minim minim;
 AudioPlayer se_jump;
 AudioPlayer se_shutter;
 
+ControlP5 cp5;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
+PFont font_small = createFont("Impact", 20);
 PFont font_normal = createFont("Impact", 36);
 PFont font_large = createFont("Impact", 160);
 
 ScenarioPlayer scenario;
 
-ControlP5 cp5;
 void init() {
   frame.removeNotify();
   //frame.setUndecorated(true);
@@ -63,6 +64,7 @@ void enter_idle_mode() {
   clear_bpm_status();
   clear_human_status();
   scenario.rewind();
+  clear_message();
 }
 
 void Reload_Scenario() {
@@ -89,6 +91,9 @@ void keyPressed() {
   switch(key) {
   case 0x20:
     fire_jump();
+    break;
+  case 'c':
+    enter_idle_mode();
     break;
   }
 }
