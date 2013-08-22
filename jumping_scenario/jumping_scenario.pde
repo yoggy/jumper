@@ -1,30 +1,21 @@
 //
-//  jumping_human2.pde
+//  jumping_scenario.pde
 //
 import ddf.minim.*;
 import controlP5.*;
 import oscP5.*;
 import netP5.*;
 
-import processing.video.*;
-
-
 // configuration
-float shutter_chance = 0.2;  // 0.0-1.0
-boolean debug_draw = true;
+float shutter_chance = 0.4;  // 0.0-1.0
 
-int shutter_count = 8;
-
-int jump_count = 0;
+int  jump_count = 0;
 long last_t = 0;
 float bpm = 0.0;
 float dulation = 0.0;
 float human_y = 0.0; // 0.0-1.0
 float timeout = 3.0; // (sec)
 boolean is_take_picture = false;
-int picture_frame_counter = 0;
-float picture_frame_x;
-float picture_frame_y;
 
 Minim minim;
 AudioPlayer se_jump;
@@ -35,24 +26,21 @@ OscP5 oscP5;
 NetAddress myRemoteLocation;
 
 PFont font_normal = createFont("Impact", 36);
-PFont font_large = createFont("Impact", 360);
+PFont font_large = createFont("Impact", 160);
+
+ScenarioPlayer scenario;
 
 ControlP5 cp5;
-Capture video;
-
 void init() {
   frame.removeNotify();
   //frame.setUndecorated(true);
   frame.addNotify();
-  super.init();  
+  super.init();
 }
 
 void setup() {
-  size(480, 640);
+  size(640, 640);
 
-  video = new Capture(this, 1280, 720);
-  video.start();
-  
   minim = new Minim(this);
 
   // http://commons.nicovideo.jp/material/nc27131
@@ -63,15 +51,29 @@ void setup() {
   se_shutter = minim.loadFile("nc2035.mp3");
   se_shutter.setGain(-14.0);
 
-  cp5 = new ControlP5(this);
-  cp5.setColorForeground(0xff00aa00);
-  cp5.setColorBackground(0xff006600);
-  cp5.setColorLabel(0xff00dd00);
-  cp5.setColorValue(0xff88ff88);
-  cp5.setColorActive(0xff00bb00);
+  cp5 = new ControlP5(this);  
+  cp5.addSlider("shutter_chance").setPosition(10, 50).setSize(300, 40).setRange(0.0, 1.0);
+  cp5.addButton("Reload_Scenario").setPosition(10, 100).setSize(100, 40);
 
   oscP5 = new OscP5(this, 12001);
   myRemoteLocation = new NetAddress("127.0.0.1", 12002);
+
+  scenario = new ScenarioPlayer(this);
+  if (scenario.load("scenario.txt") == false) {
+    println("scenario.load() failed...");
+    exit();
+  }
+}
+
+void Reload_Scenario() {
+  scenario.reload();
+}
+
+void enter_idle_mode() {
+  println("enter_idle_mode()");
+  clear_bpm_status();
+  clear_human_status();
+  scenario.rewind();
 }
 
 void update() {
@@ -82,8 +84,7 @@ void update() {
 
   float dt = (millis() - last_t) / 1000.0;
   if (dt > timeout) {
-    clear_bpm_status();
-    clear_human_status();
+    enter_idle_mode();
     return;
   }
 
@@ -96,46 +97,35 @@ void update() {
 
   // check shutter chance
   if (is_take_picture == false && human_y > 0.0 && p >= shutter_chance) {
-    if (jump_count == 0) {
-      take_picture();
-    }
   }
-}
-
-void captureEvent(Capture c) {
-  c.read();
 }
 
 void draw() {
   // update human status
   update();
 
-  background(0, 0, 0);
+  background(255, 255, 255);
 
-  image(video, 0, 0, width, height);
-
-  if (debug_draw) {
-    draw_debug_info();
-  }
+  draw_debug_info();
 }
 
 void draw_debug_info() {
   // draw human body
   float x = 120;
-  float y = (height * 0.7) * (1.0 - human_y) + height * 0.3;
+  float y = (height * 0.5) * (1.0 - human_y) + height * 0.5;
   draw_human(x, y);
 
   noStroke();
 
   // draw jump count
-  fill(0, 255, 0);
+  fill(0, 0, 0);
   textFont(font_large);  
-  text(String.format("%d", jump_count), 240, 500);
+  text(String.format("%d", jump_count), 160, 260);
 
   // debug info
-  fill(0, 128, 0);
+  fill(0, 0, 0);
   textFont(font_normal);  
-  text(String.format("bpm=%.2f, dulation=%.2f(s)", bpm, dulation), 20, 30);
+  text(String.format("bpm=%.2f, dulation=%.2f(s)", bpm, dulation), 20, 35);
 }
 
 void stop() {
@@ -148,17 +138,14 @@ void stop() {
 
 void keyPressed() {
   switch(key) {
-    case 0x20:
-      fire_jump();
-      break;
-    case 'd':
-      debug_draw = !debug_draw;
-      break;
+  case 0x20:
+    fire_jump();
+    break;
   }
 }
 
 void mousePressed() {
-  fire_jump();
+  //fire_jump();
 }
 
 void oscEvent(OscMessage theOscMessage) {
@@ -185,8 +172,13 @@ void fire_jump() {
     bpm = 120.0;
     dulation = 0.5;
   }
-  jump_count ++;
-  if (jump_count == shutter_count) jump_count = 0;
+
+  if (jump_count <= scenario.getMaxTick()) {
+    jump_count ++;
+  }
+
+  // call scenario_player
+  scenario.enter(jump_count);
 }
 
 void calc_initial_human_status(float dt) {
@@ -209,28 +201,16 @@ void clear_bpm_status() {
 
 void draw_human(float  x, float y) {
   noStroke();
-  fill(0, 128, 0);
+  fill(0, 0, 0);
 
   ellipseMode(CENTER);
   ellipse(x, y - 100, 50, 50);
 
-  stroke(0, 128, 0);
-  strokeWeight(2);
+  stroke(0, 0, 0);
+  strokeWeight(4);
   line(x, y - 100, x, y - 40);
   line(x - 30, y -  60, x + 30, y - 60);
   line(x, y -  40, x - 20, y     );
   line(x, y -  40, x + 20, y     );
-}
-
-void take_picture() {
-  is_take_picture = true;
-  
-  // play shutter se
-  se_shutter.play(0);
-
-  // send osc 
-  OscMessage myMessage = new OscMessage("/take_picture");
-  myMessage.add(123);
-  oscP5.send(myMessage, myRemoteLocation);
 }
 
