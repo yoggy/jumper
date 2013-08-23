@@ -61,7 +61,7 @@ void stop() {
 int jump_guard_counter = 0;
 void check_jump() {
   if (jump_guard_counter == 0) {
-    if (now_val > threshold) {
+    if (line_chart.max_val(10) > threshold) {
       fire_jump();
       jump_guard_counter = 10;
     }   
@@ -106,6 +106,18 @@ class LineChart {
       float y1 = ((Integer)vals.get(i+1)).intValue() * step_y;
       line(x0, y0, x1, y1);
     }
+  }
+  
+  int max_val(int n) {
+    int max_val = 0;
+    int st = vals.size() - n;
+    if (st < 0) st = 0;
+    int et = vals.size() - 1;
+    for (int i = st; i <= et; ++i) {
+      int v = (Integer)vals.get(i);
+      if (v > max_val) max_val = v;
+    }
+    return v;
   }
 }
 
