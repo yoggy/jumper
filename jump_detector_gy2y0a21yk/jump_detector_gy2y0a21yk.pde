@@ -117,7 +117,7 @@ class LineChart {
       int v = (Integer)vals.get(i);
       if (v > max_val) max_val = v;
     }
-    return v;
+    return max_val;
   }
 }
 
