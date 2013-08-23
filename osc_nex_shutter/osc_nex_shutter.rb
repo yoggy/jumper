@@ -44,7 +44,7 @@ def main
 	start_preview
 
 	OSC.run do
-		server = Server.new(12345)
+		server = Server.new(12345, '0.0.0.0')
 		server.add_pattern '/take_picture' do |*args|
 			pp args
 			take_picture
