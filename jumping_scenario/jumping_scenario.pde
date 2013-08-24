@@ -8,7 +8,7 @@ import netP5.*;
 
 // configuration
 float shutter_chance  = 0.4;  // 0.0-1.0
-float shutter_chance2 = 0.2;  // 0.0-1.0
+float shutter_chance2 = 0.05;  // 0.0-1.0
 
 ControlP5 cp5;
 OscP5 oscP5;
