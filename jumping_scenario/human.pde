@@ -3,7 +3,7 @@ long last_t = 0;
 float bpm = 0.0;
 float dulation = 0.0;
 float human_y = 0.0; // 0.0-1.0
-float timeout = 3.0; // (sec)
+float timeout = 2.0; // (sec)
 boolean is_take_picture = false;
 
 void clear_human_status() {
