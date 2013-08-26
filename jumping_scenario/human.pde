@@ -26,13 +26,14 @@ void calc_initial_human_status(float dt) {
 
 void fire_jump() {
   clear_message();
-  
+
+  se_jump.play(0);
+
   long t = millis();
   float dt = (t - last_t) / 1000.0;
 
   if (dt < timeout) {
     calc_initial_human_status(dt);
-    se_jump.play(0);
   }
   else {
     clear_bpm_status();
