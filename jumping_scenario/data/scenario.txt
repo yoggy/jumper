@@ -2,41 +2,20 @@
 1  hide_overlay
 =  clear_effect
 
-3  show_overlay s:sono-cho-shi.jpg
-=  change_effect_random
+4  show_overlay s:sono-cho-shi.png
+#=  change_effect_random
+=  clear_effect
++  nop
+
+6  show_overlay s:0de.png
 +  nop
 +  hide_overlay
 
 # take picture 1
-10 show_overlay s:3.jpg
-+  show_overlay s:2.jpg
-+  show_overlay s:1.jpg
-+  take_picture 
-=  show_overlay s:shutter.jpg
-+  show_overlay s:sono-cho-shi.jpg
-+  nop
-+  change_effect_random
-=  hide_overlay
-
-# take picture 2
-18 show_overlay s:3.jpg
-+  show_overlay s:2.jpg
-+  show_overlay s:1.jpg
-+  take_picture 
-=  show_overlay s:shutter.jpg
-+  nop
-+  show_overlay s:sono-cho-shi.jpg
-=  hide_overlay
-
-# take picture 3
-24 show_overlay s:3.jpg
-+  show_overlay s:2.jpg
-+  show_overlay s:1.jpg
-+  take_picture 
-=  show_overlay s:shutter.jpg
-+  nop
-
-# finish
-+  show_overlay s:finish.jpg
+10  show_overlay s:3.png
++  show_overlay s:2.png
++  show_overlay s:1.png
++  take_picture
++  show_overlay s:finish.png
+#+  change_effect_random
 =  clear_effect
-

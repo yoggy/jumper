@@ -1,11 +1,15 @@
-0 clear_effect
-#= hide_overlay
-=  change_effect_random
+#0 clear_effect
+0  change_effect_random
+= hide_overlay
 
-5 show_overlay s:title1.jpg
+4 show_overlay s:title1.png
 
-10 show_overlay s:title2.jpg 
+10 show_overlay s:title2.png
+
 + nop
 + nop
 + nop
 + nop
++ nop
++ nop
+
