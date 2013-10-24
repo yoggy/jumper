@@ -1,4 +1,17 @@
 #!/usr/bin/python
+#
+# raspi_jumper.py
+#
+# setup
+#   $ sudo apt-get install python-dev python-pip python-smbus python-rpi.gpio
+#   $ sudo apt-get install i2c-tools
+#   $ sudo pip install spidev
+#
+# check
+#   $ sudo i2cdetect -y 0 (bus0)
+#       or
+#   $ sudo i2cdetect -y 1 (bus1)
+#
 import sys
 import signal
 
@@ -132,6 +145,9 @@ class RaspiJumper:
 		self.se_jump = pygame.mixer.Sound("nc27131.wav")
 		self.se_jump.set_volume(0.5)
 
+		self.now_status = False
+		self.old_status = False
+		self.guard_timer = 0
 		self.a0 = 0
 		self.a2 = 0
 		self.a3 = 0
@@ -155,6 +171,12 @@ class RaspiJumper:
 		self.lcd.move(4, 1)
 		self.lcd.puts("%4d" % self.a3)
 
+		# led status
+		if self.now_status == True:
+			GPIO.output(pin, True)
+		else:
+			GPIO.output(pin, False)
+
 	def loop(self):
 		while True:
 			self.count += 1
@@ -170,13 +192,25 @@ class RaspiJumper:
 
 				# detect
 				if self.a0 > self.a2:
-					GPIO.output(pin, True)
-					self.se_jump.play()
+					self.now_status = True
 				else:
-					GPIO.output(pin, False)
+					self.now_status = False
+
+				# check fire
+				if self.guard_timer == 0 and self.now_status == True and self.now_status != self.old_status:
+					self.fire_jump()
+					self.guard_timer = 7
 
 				self.debug_print()
 				self.clear()
+				
+				if self.guard_timer > 0:
+					self.guard_timer -= 1
+
+				self.old_status = self.now_status
+
+	def fire_jump(self):
+		self.se_jump.play()
 
 if __name__ == '__main__':
 	signal.signal(signal.SIGINT, sigint_handler)
