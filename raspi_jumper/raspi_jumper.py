@@ -7,11 +7,14 @@ import smbus
 from time import sleep
 import RPi.GPIO as GPIO
 
+import pygame
+
 pin = 13  # GPIO27
 
 def sigint_handler(signo, frame):
 	GPIO.output(pin, False)
 	GPIO.cleanup()
+	#pygame.mixer.quit()
 	sys.exit(0)
 
 class MCP3208:
@@ -110,55 +113,75 @@ class AkiI2CLCD:
 			self.putc(ord(c))
 
 
+class RaspiJumper:
+	def __init__(self):
+		self.setup()
+
+	def setup(self):
+		GPIO.setwarnings(False)
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setup(pin, GPIO.OUT) 
+	
+		self.spi = MCP3208(0)
+	
+		self.lcd = AkiI2CLCD(smbus.SMBus(1))
+		self.lcd.clear()
+		self.lcd.contrast(2)
+	
+		pygame.mixer.init(frequency=44100, size=8, channels=1, buffer=1024)
+		self.se_jump = pygame.mixer.Sound("nc27131.wav")
+		self.se_jump.set_volume(0.5)
+
+		self.a0 = 0
+		self.a2 = 0
+		self.a3 = 0
+		self.clear()
+
+	def clear(self):
+		self.count  = 0
+		self.total0 = 0
+		self.total2 = 0
+		self.total3 = 0
+
+	def debug_print(self):
+		# stdout 
+		print "ch0=%04d, ch2=%04d, ch3=%04d" % (self.a0, self.a2, self.a3)
+
+		# lcd display
+		self.lcd.move(0, 0)
+		self.lcd.puts("val=%4d" % self.a0)
+		self.lcd.move(0, 1)
+		self.lcd.puts("%4d" % self.a2)
+		self.lcd.move(4, 1)
+		self.lcd.puts("%4d" % self.a3)
+
+	def loop(self):
+		while True:
+			self.count += 1
+			self.total0 += self.spi.read(0) # gp2y0a21yk
+			self.total2 += self.spi.read(2) # variable resistor1
+			self.total3 += self.spi.read(3) # variable resistor2
+
+			if self.count == 10:
+				# average
+				self.a0 = self.total0 / 10
+				self.a2 = self.total2 / 10
+				self.a3 = self.total3 / 10
+
+				# detect
+				if self.a0 > self.a2:
+					GPIO.output(pin, True)
+					self.se_jump.play()
+				else:
+					GPIO.output(pin, False)
+
+				self.debug_print()
+				self.clear()
+
 if __name__ == '__main__':
 	signal.signal(signal.SIGINT, sigint_handler)
-	GPIO.setwarnings(False)
-	GPIO.setmode(GPIO.BOARD)
-	GPIO.setup(pin, GPIO.OUT) 
+	jumper = RaspiJumper()
+	jumper.loop()
 
-	spi = MCP3208(0)
-
-	lcd = AkiI2CLCD(smbus.SMBus(1))
-	lcd.clear()
-	lcd.contrast(2)
-
-	count = 0
-	a0 = 0
-	a2 = 0
-	a3 = 0
-	
-	while True:
-		count += 1
-		a0 += spi.read(0)
-		a2 += spi.read(2)
-		a3 += spi.read(3)
-
-		if count == 10:
-			# average
-			a0 /= 10
-			a2 /= 10
-			a3 /= 10
-
-			# detect
-			if a0 > a2:
-				GPIO.output(pin, True)
-			else:
-				GPIO.output(pin, False)
-
-			# debug print
-			print "ch0=%04d, ch1=n/a, ch2=%04d, ch3=%04d" % (a0, a2, a3)
-			lcd.move(0, 0)
-			lcd.puts("val=%4d" % a0)
-			lcd.move(0, 1)
-			lcd.puts("%4d" % a2)
-			lcd.move(4, 1)
-			lcd.puts("%4d" % a3)
-
-			# clear data
-			count = 0
-			a0 = 0
-			a1 = 0
-			a2 = 0
-			a3 = 0
 
 
