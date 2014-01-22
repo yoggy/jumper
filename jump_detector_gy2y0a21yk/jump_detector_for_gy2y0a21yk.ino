@@ -14,13 +14,25 @@ void setup() {
   while (!Serial) { /* for leonald, Arduino micro */ }
 }
 
+int count = 30;
+
 void loop() {
   total = 0;
   avg = 0;
-  for (int i = 0; i < 10; ++i) {
-    int val = analogRead(A0);  // 距離が近いほど値が大きくなる
+  for (int i = 0; i < count; ++i) {
+    int val = analogRead(A1);  // 距離が近いほど値が大きくなる
     total += val;
   }
-  avg = total / 10;  
+  avg = total / count;  
   Serial.println(avg);
+  
+  // for debug
+  if (avg > 400) {
+    digitalWrite(13, HIGH);
+  }
+  else {
+    digitalWrite(13, LOW);
+  }
 }
+
+
