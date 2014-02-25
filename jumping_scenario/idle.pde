@@ -19,7 +19,8 @@ boolean is_idle_mode() {
 }
 
 void enter_idle_mode() {
-  println("enter_idle_mode()");
+  println("enter_idle_mode");
+  log("enter_idle_mode");
   clear_bpm_status();
   clear_human_status();
 

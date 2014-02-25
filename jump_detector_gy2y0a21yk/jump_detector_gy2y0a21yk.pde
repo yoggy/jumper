@@ -65,7 +65,7 @@ void check_jump() {
   if (jump_guard_counter == 0) {
     if (line_chart.max_val(10) > threshold) {
       fire_jump();
-      jump_guard_counter = 10;
+      jump_guard_counter = 12;
     }
   }
   if (jump_guard_counter > 0) jump_guard_counter --;

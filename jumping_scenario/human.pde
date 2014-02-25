@@ -25,6 +25,8 @@ void calc_initial_human_status(float dt) {
 }
 
 void fire_jump() {
+  log("call_fire_jump");
+
   clear_message();
 
   se_jump.play(0);
@@ -48,6 +50,9 @@ void fire_jump() {
 
   if (jump_count <= scenario.getMaxTick()) {
     jump_count ++;
+    if (1 < jump_count) {
+      log("jump_count", ""+jump_count, "bpm", ""+bpm, "dulation", ""+dulation);
+    }
   }
 
   // call scenario_player

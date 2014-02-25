@@ -207,6 +207,7 @@ class ScenarioPlayer {
     if (map.containsKey(tick)) {
       Command [] cmds = getCommands(tick);
       for (int i = 0; i < cmds.length; ++i) {
+        log(cmds[i].toString());
         cmds[i].call();
       }
     }
@@ -335,19 +336,15 @@ class Command {
 
   String toString() {
     String msg = "";
-    msg = "Command{tick=" + tick + ", fn=" + function_name + ", ";
+    msg = "tick," + tick + "," + function_name;
 
-    if (args == null) {
-      msg += "args=null";
-    }
-    else {
+    if (args != null) {
+      msg += ",";
       for (int i = 0; i < args.length; ++i) {
-        msg += "arg" + i + "=" + args[i];
+        msg += args[i];
         if (i < args.length - 1) msg += ",";
       }
     }
-
-    msg += "}";
     return msg;
   }
 }

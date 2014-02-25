@@ -82,9 +82,11 @@ void stop() {
 void keyPressed() {
   switch(key) {
   case 0x20:
+    log("press_space_key");
     fire_jump();
     break;
   case 'c':
+    log("press_c_key");
     enter_idle_mode();
     break;
   }

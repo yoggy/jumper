@@ -65,6 +65,7 @@ void take_picture() {
 // for webcam system (call from update_human_status())
 void fire_take_picture() {
   println("fire_take_picture!!!!");
+  log("fire_take_picture");
   se_shutter.play(0);
 
   OscMessage msg = new OscMessage("/take_picture");
@@ -74,6 +75,7 @@ void fire_take_picture() {
 // for nex-5r  (call from update_human_status())
 void fire_take_picture2() {
   println("fire_take_picture2!!!!");
+  log("fire_take_picture2");
 
   OscMessage msg = new OscMessage("/take_picture");
   oscP5.send(msg, remote_location2);
