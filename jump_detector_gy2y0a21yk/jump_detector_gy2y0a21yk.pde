@@ -46,8 +46,7 @@ void draw() {
   stroke(0, 255, 0);
   line(0, threshold / 1024.0 * height, width, threshold / 1024.0 * height);
 
-  log("sensor_value", ""+ now_val);
-  log("threshold", ""+ threshold);
+  log("sensor_value", ""+ now_val, "threshold", ""+ threshold);
 
   check_jump();
 
