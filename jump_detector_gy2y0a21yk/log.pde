@@ -8,11 +8,12 @@ boolean enable_logging = true;
 String log_filename_ = "log.txt";
 PrintWriter log_pw_ = null;
 
-synchronized void log(String operation_type, String... args) {
+synchronized void log(String... args) {
   if (enable_logging == false) return;
   
   try {
     if (log_pw_ == null) {
+      // open log file
       new File(dataPath("")).mkdir();
       File f = new File(dataPath(log_filename_));
       log_pw_ = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
@@ -27,7 +28,7 @@ synchronized void log(String operation_type, String... args) {
     }
 
     long t = System.currentTimeMillis();
-    log_pw_.println("" + t + "," + operation_type + "," + args_str);
+    log_pw_.println("" + t + "," + args_str);
     log_pw_.flush();
   }
   catch(Exception e) {

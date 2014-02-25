@@ -72,7 +72,7 @@ void check_jump() {
 }
 
 void fire_jump() {
-  log("fire_jump", "");
+  log("fire_jump");
   OscMessage myMessage = new OscMessage("/jump");
   oscP5.send(myMessage, myRemoteLocation);
 }
