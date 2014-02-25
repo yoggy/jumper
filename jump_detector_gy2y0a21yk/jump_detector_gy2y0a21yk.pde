@@ -14,11 +14,34 @@ PFont font_normal = createFont("Impact", 36);
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
+//
+// for logging
+//
+import java.io.*;
+String log_filename_ = "log.txt";
+PrintWriter log_pw_ = null;
+synchronized void log(String operation_type, String arg) {
+  try {
+    if (log_pw_ == null) {
+      new File(dataPath("")).mkdir();
+      File f = new File(dataPath(log_filename_));
+      log_pw_ = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+    }
+
+    long t = System.currentTimeMillis();
+    log_pw_.println("" + t + "," + operation_type + "," + arg);
+    log_pw_.flush();
+  }
+  catch(Exception e) {
+    e.printStackTrace();
+  }
+}
+
 void setup() {  
   size(600, 600);
   cp5 = new ControlP5(this);
   cp5.addSlider("threshold").setPosition(20, 20).setSize(200, 15).setRange(0, 1023).setValue(500);
-  serial = new Serial(this, "/dev/cu.usbmodem1421", 115200);
+  serial = new Serial(this, "/dev/ttyACM0", 115200);
   line_chart = new LineChart(5000);
 
   oscP5 = new OscP5(this, 12000);
@@ -26,7 +49,7 @@ void setup() {
 }
 
 void readSerial() {
-  while(serial.available() > 0) {
+  while (serial.available () > 0) {
     String l = serial.readStringUntil(10);
     if (l == null) continue;
     l = trim(l);
@@ -38,20 +61,22 @@ void readSerial() {
 
 void draw() {
   readSerial();
-  
+
   background(0, 0, 0);
   line_chart.draw();
-  
+
   stroke(0, 255, 0);
   line(0, threshold / 1024.0 * height, width, threshold / 1024.0 * height);
+
+  log("sensor_value", ""+ now_val);
+  log("threshold", ""+ threshold);
 
   check_jump();
 
   // debug info
   fill(0, 255, 0);
   textFont(font_normal);  
-  text(String.format("val=%d, threshold=%d", now_val, threshold), 20, height - 30);  
-
+  text(String.format("val=%d, threshold=%d", now_val, threshold), 20, height - 30);
 }
 
 void stop() {
@@ -64,12 +89,13 @@ void check_jump() {
     if (line_chart.max_val(10) > threshold) {
       fire_jump();
       jump_guard_counter = 10;
-    }   
+    }
   }
   if (jump_guard_counter > 0) jump_guard_counter --;
 }
 
 void fire_jump() {
+  log("fire_jump", "");
   OscMessage myMessage = new OscMessage("/jump");
   oscP5.send(myMessage, myRemoteLocation);
 }
@@ -77,9 +103,9 @@ void fire_jump() {
 class LineChart {
   Vector vals = new Vector();
   int max_size = 1024;
-  
+
   LineChart(int size) {
-     max_size = size;
+    max_size = size;
   }
 
   int get(int idx) {
@@ -107,7 +133,7 @@ class LineChart {
       line(x0, y0, x1, y1);
     }
   }
-  
+
   int max_val(int n) {
     int max_val = 0;
     int st = vals.size() - n;
